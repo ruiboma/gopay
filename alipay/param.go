@@ -2,6 +2,8 @@ package alipay
 
 import (
 	"crypto"
+	"crypto/hmac"
+	"crypto/md5"
 	"crypto/rand"
 	"crypto/rsa"
 	"crypto/sha1"
@@ -206,6 +208,8 @@ func GetRsaSign(bm gopay.BodyMap, signType string, t PKCSType, privateKey string
 			return gotil.NULL, errors.New("parse PKCS8 key error")
 		}
 		key = pk8
+	case OTH:
+
 	default:
 		if key, err = x509.ParsePKCS1PrivateKey(block.Bytes); err != nil {
 			return gotil.NULL, err
@@ -219,6 +223,12 @@ func GetRsaSign(bm gopay.BodyMap, signType string, t PKCSType, privateKey string
 	case RSA2:
 		h = sha256.New()
 		hashs = crypto.SHA256
+	case MD5:
+		hmacS := hmac.New(md5.New, []byte(privateKey))
+		hmacS.Write([]byte(bm.EncodeAliPaySignParams()))
+		encryptedBytes := hmacS.Sum([]byte(""))
+		sign = base64.StdEncoding.EncodeToString(encryptedBytes)
+		return
 	default:
 		h = sha256.New()
 		hashs = crypto.SHA256

@@ -10,8 +10,10 @@ const (
 	LocationShanghai          = "Asia/Shanghai"
 	PKCS1            PKCSType = 1
 	PKCS8            PKCSType = 2
+	OTH            PKCSType = 3
 	RSA                       = "RSA"
 	RSA2                      = "RSA2"
+	MD5                       = "MD5"
 )
 
 type PKCSType uint8
